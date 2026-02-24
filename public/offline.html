@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لا يوجد اتصال | زاد الخير</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+        p {
+            color: #94a3b8;
+            line-height: 1.5;
+            max-width: 400px;
+            margin-bottom: 32px;
+        }
+        button {
+            background-color: #166534; /* Green-700 */
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #14532d; /* Green-900 */
+        }
+    </style>
+</head>
+<body>
+    <img src="/logo/logo.png" alt="Zad Al Khayr Logo" class="icon">
+    <h1>لا يوجد اتصال بالإنترنت</h1>
+    <p>يبدو أنك غير متصل بالإنترنت حالياً. يرجى التحقق من اتصالك والمحاولة مرة أخرى.</p>
+    <button onclick="window.location.reload()">إعادة المحاولة</button>
+</body>
+</html>

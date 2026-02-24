@@ -1,0 +1,233 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Fixed list of Zones in Sadat City to group logistics
+enum Zone {
+  // المناطق السكنية (1-36)
+  RESIDENTIAL_1    // المنطقة السكنية الأولى
+  RESIDENTIAL_2    // المنطقة السكنية الثانية
+  RESIDENTIAL_3    // المنطقة السكنية الثالثة
+  RESIDENTIAL_4    // المنطقة السكنية الرابعة
+  RESIDENTIAL_5    // المنطقة السكنية الخامسة
+  RESIDENTIAL_6    // المنطقة السكنية السادسة
+  RESIDENTIAL_7    // المنطقة السكنية السابعة
+  RESIDENTIAL_8    // المنطقة السكنية الثامنة
+  RESIDENTIAL_9    // المنطقة السكنية التاسعة
+  RESIDENTIAL_10   // المنطقة السكنية العاشرة
+  RESIDENTIAL_11   // المنطقة السكنية الحادية عشرة
+  RESIDENTIAL_12   // المنطقة السكنية الثانية عشرة
+  RESIDENTIAL_13   // المنطقة السكنية الثالثة عشرة
+  RESIDENTIAL_14   // المنطقة السكنية الرابعة عشرة
+  RESIDENTIAL_15   // المنطقة السكنية الخامسة عشرة
+  RESIDENTIAL_16   // المنطقة السكنية السادسة عشرة
+  RESIDENTIAL_17   // المنطقة السكنية السابعة عشرة
+  RESIDENTIAL_18   // المنطقة السكنية الثامنة عشرة
+  RESIDENTIAL_19   // المنطقة السكنية التاسعة عشرة
+  RESIDENTIAL_20   // المنطقة السكنية العشرون
+  RESIDENTIAL_21   // المنطقة السكنية الحادية والعشرون
+  RESIDENTIAL_22   // المنطقة السكنية الثانية والعشرون
+  RESIDENTIAL_23   // المنطقة السكنية الثالثة والعشرون
+  RESIDENTIAL_24   // المنطقة السكنية الرابعة والعشرون
+  RESIDENTIAL_25   // المنطقة السكنية الخامسة والعشرون
+  RESIDENTIAL_26   // المنطقة السكنية السادسة والعشرون
+  RESIDENTIAL_27   // المنطقة السكنية السابعة والعشرون
+  RESIDENTIAL_28   // المنطقة السكنية الثامنة والعشرون
+  RESIDENTIAL_29   // المنطقة السكنية التاسعة والعشرون
+  RESIDENTIAL_30   // المنطقة السكنية الثلاثون
+  RESIDENTIAL_31   // المنطقة السكنية الحادية والثلاثون
+  RESIDENTIAL_32   // المنطقة السكنية الثانية والثلاثون
+  RESIDENTIAL_33   // المنطقة السكنية الثالثة والثلاثون
+  RESIDENTIAL_34   // المنطقة السكنية الرابعة والثلاثون
+  RESIDENTIAL_35   // المنطقة السكنية الخامسة والثلاثون
+  RESIDENTIAL_36   // المنطقة السكنية السادسة والثلاثون
+  
+  // مناطق ابن بيتك
+  IBN_BAYTIK_1     // المنطقة الأولى: ابن بيتك
+  IBN_BAYTIK_2     // المنطقة الثانية: ابن بيتك
+  IBN_BAYTIK_3     // المنطقة الثالثة: ابن بيتك
+  
+  // المجمعات والمناطق الخاصة
+  DAR_MISR         // مجمع دار مصر السكني
+  PARAMETER        // منطقة الباراميتر
+  ALFI_FADDAN      // منطقة الألفين فدان
+  QURTUBA          // مساكن قرطبة
+  AWQAF            // مساكن الأوقاف
+  
+  // الأحياء
+  HAY_ZAYTOUN      // حي الزيتون
+  HAY_NAKHIL       // حي النخيل
+  HAY_FERDOUS      // حي الفردوس
+  HAY_RAWDA        // حي الروضة
+  HAY_RAYHAN       // حي الريحان
+  
+  // بيت الوطن
+  BEIT_WATAN_3     // بيت الوطن – المنطقة الثالثة
+  BEIT_WATAN_13    // بيت الوطن – المنطقة الثالثة عشرة
+}
+
+
+// Vehicle types for volunteers
+enum VehicleType {
+  CAR         // سيارة
+  MOTORCYCLE  // موتوسيكل
+  BICYCLE     // دراجة
+  WALKING     // مشيًا
+}
+
+// Gender enum
+enum Gender {
+  MALE        // ذكر
+  FEMALE      // أنثى
+}
+
+enum DeliveryMethod {
+  SELF_DELIVERY   // سأوصّل بنفسي - Donor will bring food to the hub
+  PICKUP          // سيأتي إليّ متطوع - Volunteer will pick up from donor
+}
+
+enum DonationStatus {
+  PENDING             // قيد الانتظار - Donor submitted, waiting for pickup
+  ASSIGNED            // تم التعيين - Volunteer claimed to pick it up
+  COLLECTED           // تم الاستلام - Volunteer collected from donor
+  OUT_FOR_DELIVERY    // في الطريق - Volunteer en route to beneficiary
+  COMPLETED           // تم التسليم - Delivered
+  CANCELLED           // ملغي - Cancelled order
+}
+
+model Donation {
+  id              String         @id @default(cuid())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Donor Info (No Account Required)
+  donorName       String         // اسم المتبرع
+  donorPhone      String         // رقم الهاتف
+  
+  // Location (Optional for SELF_DELIVERY)
+  addressText     String?        // العنوان التفصيلي - Only required for PICKUP
+  zone            Zone?          // المنطقة - Only required for PICKUP
+  
+  // The Food
+  description     String         // وصف الطعام - "5 meals, chicken and rice"
+  quantity        Int            @default(1) // الكمية
+  
+  // Delivery Method
+  deliveryMethod  DeliveryMethod @default(PICKUP) // طريقة التوصيل
+  
+  // Scheduling
+  scheduledDate   DateTime       // تاريخ الاستلام والتوزيع - The date when donation will be collected and distributed
+  
+  // Logistics
+  status          DonationStatus @default(PENDING)
+  
+  // Volunteer assignment (relation to User)
+  volunteerId     String?        // معرف المتطوع
+  volunteer       User?          @relation("AssignedDonations", fields: [volunteerId], references: [id])
+  
+  // Delivery tracking
+  deliveredByName String?        // اسم المتطوع الذي قام بالتوصيل - Stored when order is completed
+  
+  // Beneficiary assignment
+  beneficiaryId   String?        // معرف المستفيد
+  beneficiary     Beneficiary?   @relation(fields: [beneficiaryId], references: [id])
+  
+  adminNotes      String?        // ملاحظات الإدارة - Internal notes for the Hub team
+}
+
+// User model - supports regular users, volunteers, and admins
+model User {
+  id            String       @id @default(cuid())
+  phone         String       @unique
+  password      String       // Hashed
+  name          String
+  role          String       @default("USER") // USER, PENDING_VOLUNTEER, VOLUNTEER, ADMIN
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  // Volunteer-specific fields (optional in DB, mandatory for volunteer registration)
+  nationalId    String?      @unique  // رقم البطاقة القومية
+  vehicleType   VehicleType? // نوع المركبة
+  addressText   String?      // العنوان التفصيلي
+  zone          Zone?        // المنطقة
+  gender        Gender?      // النوع
+  dateOfBirth   DateTime?    // تاريخ الميلاد
+  
+  // Relations
+  assignedDonations Donation[] @relation("AssignedDonations")
+  helpRequests      HelpRequest[] @relation("RequestedHelp")
+  helpOffered       HelpRequest[] @relation("OfferedHelp")
+}
+
+// Blocked phones - prevent fake/spam donations
+model BlockedPhone {
+  id        String   @id @default(cuid())
+  phone     String   @unique  // رقم الهاتف المحظور
+  reason    String?  // سبب الحظر
+  blockedBy String   // اسم الأدمن الذي حظر الرقم
+  createdAt DateTime @default(now())
+}
+
+// Help Request Status
+enum HelpRequestStatus {
+  PENDING   // في انتظار المساعدة
+  ACCEPTED  // تم قبول المساعدة
+  RESOLVED  // تم حل المشكلة
+  CANCELLED // تم الإلغاء
+}
+
+// Help Request - for volunteers to request help from other volunteers
+model HelpRequest {
+  id          String            @id @default(cuid())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  
+  // Who needs help
+  requesterId String
+  requester   User              @relation("RequestedHelp", fields: [requesterId], references: [id])
+  
+  // Request details
+  reason      String            // سبب طلب المساعدة
+  location    String            // الموقع/العنوان الحالي
+  
+  // Status
+  status      HelpRequestStatus @default(PENDING)
+  
+  // Who accepted to help (optional until someone accepts)
+  helperId    String?
+  helper      User?             @relation("OfferedHelp", fields: [helperId], references: [id])
+  
+  // Optional: which donation they were working on
+  donationId  String?
+}
+
+// System Settings - Admin controlled settings
+model SystemSettings {
+  id                String   @id @default("main") // Single row with fixed ID
+  volunteerDashOpen Boolean  @default(false)      // هل لوحة المتطوعين مفتوحة؟
+  updatedAt         DateTime @updatedAt
+  updatedBy         String?                       // Who last updated
+}
+
+// Beneficiary - المستفيدين (الفقراء)
+model Beneficiary {
+  id            String     @id @default(cuid())
+  name          String     // اسم المستفيد
+  phone         String     // رقم الهاتف
+  zone          String     // المنطقة
+  address       String     // العنوان
+  familyMembers Int        @default(1) // عدد أفراد الأسرة
+  isActive      Boolean    @default(true) // نشط أم لا
+  createdAt     DateTime   @default(now())
+  
+  // Relations
+  donations     Donation[] // التبرعات المستلمة
+}

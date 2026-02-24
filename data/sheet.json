@@ -1,0 +1,37 @@
+[
+    {
+        "name": "عبدالله أحمد النجار",
+        "phoneNumber": 1068612678,
+        "zone": "2000 فدان",
+        "address": "منزل احمد النجار",
+        "familyMembers": 4
+    },
+    {
+        "name": "يوسف عبدالفتاح",
+        "phoneNumber": 1555555,
+        "zone": "الاولي",
+        "address": "مسجد الرحمة",
+        "familyMembers": 3
+    },
+    {
+        "name": "محمد عبدالفتاح",
+        "phoneNumber": 1222222,
+        "zone": "الثانية",
+        "address": "سوق الأولى",
+        "familyMembers": 5
+    },
+    {
+        "name": "محمود",
+        "phoneNumber": 11111,
+        "zone": "السابعة",
+        "address": "البيت",
+        "familyMembers": 2
+    },
+    {
+        "name": "خالد",
+        "phoneNumber": 11111546465,
+        "zone": "السابعة",
+        "address": " يبيسنبتسميبس",
+        "familyMembers": 2
+    }
+]
